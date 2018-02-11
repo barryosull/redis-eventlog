@@ -1,6 +1,8 @@
-<?php namespace ReventLog;
+<?php namespace ReventLog\Type\RedisList;
 
 use Predis;
+use ReventLog\EventLog;
+use ReventLog\EventStream;
 
 // TODO: Enable write to disk
 

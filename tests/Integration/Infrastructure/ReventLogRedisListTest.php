@@ -1,13 +1,15 @@
 <?php namespace ReventLogTests\Integration\Infrastructure;
 
+use Predis;
+use ReventLog\Type\RedisList\ReventLog;
 use ReventLog\EventLog;
-use ReventLogTests\Fakes\InMemoryEventLog;
 use ReventLogTests\Integration\ReventLogTest;
 
-class InMemoryReventLogTest extends ReventLogTest
+class ReventLogRedisListTest extends ReventLogTest
 {
     public function eventLog(): EventLog
     {
-        return new InMemoryEventLog;
+        $client = new Predis\Client();
+        return new ReventLog($client);
     }
 }

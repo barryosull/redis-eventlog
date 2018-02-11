@@ -1,6 +1,7 @@
-<?php namespace ReventLog;
+<?php namespace ReventLog\Type\RedisList;
 
 use Predis;
+use ReventLog\EventStream;
 
 class ReventStream implements EventStream
 {
