@@ -8,6 +8,6 @@ class InMemoryReventLogTest extends ReventLogTest
 {
     public function eventLog(): EventLog
     {
-        return new InMemoryEventLog();
+        return new InMemoryEventLog;
     }
 }

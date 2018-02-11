@@ -5,8 +5,7 @@ use ReventLogTests\Fakes;
 
 abstract class ReventLogTest extends \PHPUnit\Framework\TestCase
 {
-    const AGGREGATE_TYPE = 'test.aggregate';
-    const AGGREGATE_ID = 'c51a2240-4f4f-4cb9-b5af-53954e039b28';
+    const START_POSITION = 0;
 
     /** @var ReventLog\ReventLog $log */
     private $log;
@@ -15,6 +14,7 @@ abstract class ReventLogTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->log = $this->eventLog();
+        $this->log->clear();
 
         $this->events = [
             new Fakes\TestStarted(),
@@ -27,11 +27,9 @@ abstract class ReventLogTest extends \PHPUnit\Framework\TestCase
 
     public function test_can_add_events_to_log()
     {
-        $aggregate_id = new ReventLog\AggregateId(self::AGGREGATE_TYPE, self::AGGREGATE_ID);
+        $this->log->append($this->events);
 
-        $this->log->append($aggregate_id, $this->events);
-
-        $stream = $this->log->getAggregateStream($aggregate_id);
+        $stream = $this->log->getStream(self::START_POSITION);
 
         $this->assertStreamHasEvents($this->events, $stream);
     }
@@ -46,40 +44,20 @@ abstract class ReventLogTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    const OTHER_AGGREGATE_ID = '9291ce1c-eb17-4ba9-a519-989c32ca9014';
-
-    public function test_aggregate_streams_are_unique_to_an_aggregate()
+    public function test_reading_from_stream()
     {
-        $aggregate_id = new ReventLog\AggregateId(self::AGGREGATE_TYPE, self::AGGREGATE_ID);
+        $this->log->append($this->events);
+        $this->log->append($this->events);
 
-        $other_aggregate_id = new ReventLog\AggregateId(self::AGGREGATE_TYPE, self::OTHER_AGGREGATE_ID);
-
-        $this->log->append($aggregate_id, $this->events);
-
-        $stream = $this->log->getAggregateStream($other_aggregate_id);
-
-        $this->assertStreamHasEvents([], $stream);
-    }
-
-    public function test_reading_from_aggregated_stream()
-    {
-        $aggregate_id = new ReventLog\AggregateId(self::AGGREGATE_TYPE, self::AGGREGATE_ID);
-        $other_aggregate_id = new ReventLog\AggregateId(self::AGGREGATE_TYPE, self::OTHER_AGGREGATE_ID);
-        $this->log->append($aggregate_id, $this->events);
-        $this->log->append($other_aggregate_id, $this->events);
-
-        $stream = $this->log->getStream("");
+        $stream = $this->log->getStream(self::START_POSITION);
 
         $this->assertStreamHasEvents(array_merge($this->events, $this->events), $stream);
     }
 
     public function test_picking_up_from_position_in_log()
     {
-        $aggregate_id = new ReventLog\AggregateId(self::AGGREGATE_TYPE, self::AGGREGATE_ID);
-        $other_aggregate_id = new ReventLog\AggregateId(self::AGGREGATE_TYPE, self::OTHER_AGGREGATE_ID);
-
-        $this->log->append($aggregate_id, $this->events);
-        $this->log->append($other_aggregate_id, $this->events);
+        $this->log->append($this->events);
+        $this->log->append($this->events);
 
         $last_position = 3;
         $stream_from_position = $this->log->getStream($last_position);

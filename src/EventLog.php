@@ -2,9 +2,9 @@
 
 interface EventLog
 {
-    public function append(AggregateId $aggregate_id, array $events);
+    public function clear();
 
-    public function getAggregateStream(AggregateId $aggregate_id): EventStream;
+    public function append(array $events);
 
     public function getStream(string $last_position): EventStream;
 }
