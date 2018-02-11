@@ -1,0 +1,21 @@
+{
+  "keywords": [],
+  "type": "project",
+  "require": {
+    "php": ">=7.0",
+    "predis/predis": "^1.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~6.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "ReventLog\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "classmap": [
+      "tests/"
+    ]
+  }
+}
