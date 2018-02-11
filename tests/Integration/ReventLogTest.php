@@ -1,10 +1,9 @@
-<?php namespace ReventLogTests\Acceptance;
+<?php namespace ReventLogTests\Integration;
 
-use Predis;
 use ReventLog;
 use ReventLogTests\Fakes;
 
-class ReventLogTest extends \PHPUnit\Framework\TestCase
+abstract class ReventLogTest extends \PHPUnit\Framework\TestCase
 {
     const AGGREGATE_TYPE = 'test.aggregate';
     const AGGREGATE_ID = 'c51a2240-4f4f-4cb9-b5af-53954e039b28';
@@ -15,8 +14,7 @@ class ReventLogTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $predis = new Predis\Client();
-        $this->log = new ReventLog\ReventLog($predis);
+        $this->log = $this->eventLog();
 
         $this->events = [
             new Fakes\TestStarted(),
@@ -24,6 +22,8 @@ class ReventLogTest extends \PHPUnit\Framework\TestCase
             new Fakes\TestCompleted()
         ];
     }
+
+    abstract public function eventLog(): ReventLog\ReventLog;
 
     public function test_can_add_events_to_log()
     {

@@ -1,12 +1,10 @@
 <?php namespace ReventLog;
 
-use Predis\Client;
-
 class ReventLog
 {
     private $events;
 
-    public function __construct(Client $client)
+    public function __construct()
     {
         $this->events = [];
     }
