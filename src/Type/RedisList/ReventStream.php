@@ -2,27 +2,23 @@
 
 use Predis;
 use ReventLog\EventStream;
+use ReventLog\EventEncoder;
 
 class ReventStream implements EventStream
 {
     private $client;
+    private $encoder;
     private $last_position;
     private $events;
 
     const CHUNK_SIZE = 2;
 
-    public function __construct(Predis\Client $client, int $last_position)
+    public function __construct(Predis\Client $client, EventEncoder $encoder, int $last_position)
     {
         $this->client = $client;
+        $this->encoder = $encoder;
         $this->last_position = $last_position;
         $this->events = [];
-    }
-
-    public static function decodeEvents(array $events)
-    {
-        return array_map(function($event){
-            return unserialize($event);
-        }, $events);
     }
 
     public function next()
@@ -43,7 +39,7 @@ class ReventStream implements EventStream
         $start = $this->last_position;
         $stop = $start + self::CHUNK_SIZE;
         $encoded_events = $this->client->lrange(ReventLog::STORE, $start, $stop);
-        $this->events = $this->decodeEvents($encoded_events);
+        $this->events = $this->encoder->decode($encoded_events);
     }
 
     private function getEventAndIncrementPosition()

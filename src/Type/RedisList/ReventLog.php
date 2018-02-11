@@ -3,6 +3,7 @@
 use Predis;
 use ReventLog\EventLog;
 use ReventLog\EventStream;
+use ReventLog\EventEncoder;
 
 // TODO: Enable write to disk
 
@@ -11,10 +12,12 @@ class ReventLog implements EventLog
     const STORE = 'event_log';
 
     private $client;
+    private $encoder;
 
     public function __construct(Predis\Client $client)
     {
         $this->client = $client;
+        $this->encoder = new EventEncoder();
     }
 
     /**
@@ -27,19 +30,12 @@ class ReventLog implements EventLog
 
     public function append(array $events)
     {
-        $encoded_events = $this->encodeEvents($events);
+        $encoded_events = $this->encoder->encode($events);
         $this->client->rpush(self::STORE, $encoded_events);
-    }
-
-    private function encodeEvents(array $events)
-    {
-        return array_map(function($event){
-            return serialize($event);
-        }, $events);
     }
 
     public function getStream(string $last_position): EventStream
     {
-        return new ReventStream($this->client, $last_position);
+        return new ReventStream($this->client, $this->encoder, $last_position);
     }
 }
