@@ -5,8 +5,6 @@ use ReventLog\EventLog;
 use ReventLog\EventStream;
 use ReventLog\EventEncoder;
 
-// TODO: Enable write to disk
-
 class ReventLog implements EventLog
 {
     const STORE = 'event_log';
