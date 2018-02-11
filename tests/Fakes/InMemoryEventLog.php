@@ -26,9 +26,9 @@ class InMemoryEventLog implements EventLog
     {
         $key = $aggregate_id->toString();
         if (!isset($this->events[$key])) {
-            return new EventStream([]);
+            return new InMemoryEventStream([]);
         }
-        return new EventStream($this->events[$key]);
+        return new InMemoryEventStream($this->events[$key]);
     }
 
     public function getStream(string $last_position): EventStream
@@ -42,6 +42,6 @@ class InMemoryEventLog implements EventLog
             $events = array_slice($events, $last_position);
         }
 
-        return new EventStream($events);
+        return new InMemoryEventStream($events);
     }
 }

@@ -1,5 +1,7 @@
 <?php namespace ReventLog;
 
+use Predis;
+
 class ReventLog implements EventLog
 {
     public function __construct()
@@ -14,11 +16,11 @@ class ReventLog implements EventLog
 
     public function getAggregateStream(AggregateId $aggregate_id): EventStream
     {
-        return new EventStream([]);
+        return new ReventStream([]);
     }
 
     public function getStream(string $last_position): EventStream
     {
-        return new EventStream([]);
+        return new ReventStream([]);
     }
 }
