@@ -23,7 +23,7 @@ abstract class ReventLogTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    abstract public function eventLog(): ReventLog\ReventLog;
+    abstract public function eventLog(): ReventLog\EventLog;
 
     public function test_can_add_events_to_log()
     {

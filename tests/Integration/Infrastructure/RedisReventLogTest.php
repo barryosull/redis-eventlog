@@ -1,13 +1,13 @@
 <?php namespace ReventLogTests\Integration\Infrastructure;
 
+use ReventLog\ReventLog;
 use ReventLog\EventLog;
-use ReventLogTests\Fakes\InMemoryEventLog;
 use ReventLogTests\Integration\ReventLogTest;
 
-class InMemoryReventLogTest extends ReventLogTest
+class RedisReventLogTest extends ReventLogTest
 {
     public function eventLog(): EventLog
     {
-        return new InMemoryEventLog();
+        return new ReventLog();
     }
 }
