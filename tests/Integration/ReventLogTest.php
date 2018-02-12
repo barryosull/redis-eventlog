@@ -63,4 +63,16 @@ abstract class ReventLogTest extends \PHPUnit\Framework\TestCase
         $stream_from_position = $this->log->getStream($last_position);
         $this->assertStreamHasEvents($this->events, $stream_from_position); // TODO: Bring more clarity to "events" concept
     }
+
+    public function test_getting_the_latest_event()
+    {
+        $event = $this->log->latestEvent();
+        $this->assertTrue(is_null($event), "Fetching an event from an empty log should return null");
+
+        $this->log->append($this->events);
+        $actual = $this->log->latestEvent();
+
+        $expected = $this->events[2];
+        $this->assertEquals($expected, $actual, "The events do not match");
+    }
 }

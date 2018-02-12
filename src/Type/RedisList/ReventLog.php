@@ -36,4 +36,13 @@ class ReventLog implements EventLog
     {
         return new ReventStream($this->client, $this->encoder, $last_position);
     }
+
+    public function latestEvent()
+    {
+        $events = $this->client->lrange(self::STORE, -1, -1);
+        if (isset($events[0])) {
+            return $this->encoder->decode($events)[0];
+        }
+        return null;
+    }
 }

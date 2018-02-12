@@ -7,4 +7,6 @@ interface EventLog
     public function append(array $events);
 
     public function getStream(string $last_position): EventStream;
+
+    public function latestEvent();
 }

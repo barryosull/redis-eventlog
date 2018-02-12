@@ -32,4 +32,9 @@ class InMemoryEventLog implements EventLog
     {
         $this->events = [];
     }
+
+    public function latestEvent()
+    {
+        return array_values(array_slice($this->events, -1))[0] ?? null;
+    }
 }
