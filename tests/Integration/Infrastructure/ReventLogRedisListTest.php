@@ -7,6 +7,8 @@ use ReventLogTests\Integration\ReventLogTest;
 
 class ReventLogRedisListTest extends ReventLogTest
 {
+    const WAIT_TIME = 1;
+
     public function eventLog(): EventLog
     {
         $client = new Predis\Client();
@@ -19,7 +21,7 @@ class ReventLogRedisListTest extends ReventLogTest
             $callable = (object)['saw_event'=>false];
             $this->log->subscribe(function() use ($callable) {
                 $callable->saw_event = true;
-            });
+            }, self::WAIT_TIME);
 
             $this->assertTrue($callable->saw_event);
 

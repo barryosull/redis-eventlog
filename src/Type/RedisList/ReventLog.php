@@ -10,6 +10,7 @@ class ReventLog implements EventLog
 {
     const STORE = 'event_log';
     const CHANNEL = 'new_events';
+    const WAIT_INDEFINITELY = -1;
 
     private $client;
     private $encoder;
@@ -49,9 +50,9 @@ class ReventLog implements EventLog
         return null;
     }
 
-    public function subscribe(callable $on_event)
+    public function subscribe(callable $on_event, int $wait_timeout=self::WAIT_INDEFINITELY)
     {
-        $consumer_client = new Predis\Client(['read_write_timeout' => 1]);
+        $consumer_client = new Predis\Client(['read_write_timeout'=>$wait_timeout]);
         $consumer = new Consumer($consumer_client);
         $consumer->subscribe(self::CHANNEL);
 
