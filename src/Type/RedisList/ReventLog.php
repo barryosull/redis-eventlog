@@ -1,6 +1,7 @@
 <?php namespace ReventLog\Type\RedisList;
 
 use Predis;
+use Predis\PubSub\Consumer;
 use ReventLog\EventLog;
 use ReventLog\EventStream;
 use ReventLog\EventEncoder;
@@ -8,6 +9,7 @@ use ReventLog\EventEncoder;
 class ReventLog implements EventLog
 {
     const STORE = 'event_log';
+    const CHANNEL = 'new_events';
 
     private $client;
     private $encoder;
@@ -30,6 +32,7 @@ class ReventLog implements EventLog
     {
         $encoded_events = $this->encoder->encode($events);
         $this->client->rpush(self::STORE, $encoded_events);
+        $this->client->publish(self::CHANNEL, true);
     }
 
     public function getStream(string $last_position): EventStream
@@ -44,5 +47,20 @@ class ReventLog implements EventLog
             return $this->encoder->decode($events)[0];
         }
         return null;
+    }
+
+    public function subscribe(callable $on_event)
+    {
+        $consumer_client = new Predis\Client(['read_write_timeout' => 1]);
+        $consumer = new Consumer($consumer_client);
+        $consumer->subscribe(self::CHANNEL);
+
+        try {
+            foreach ($consumer as $message) {
+                $on_event();
+            }
+        } catch (Predis\Connection\ConnectionException $exception) {
+            // We expect it to timeout
+        }
     }
 }

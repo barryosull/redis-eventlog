@@ -10,4 +10,16 @@ class ReventLogInMemoryTest extends ReventLogTest
     {
         return new InMemoryEventLog;
     }
+
+    public function test_waits_for_events()
+    {
+        $callable = (object)['saw_event'=>false];
+        $this->log->subscribe(function() use ($callable) {
+            $callable->saw_event = true;
+        });
+
+        $this->log->append($this->events);
+
+        $this->assertTrue($callable->saw_event);
+    }
 }

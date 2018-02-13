@@ -8,8 +8,8 @@ abstract class ReventLogTest extends \PHPUnit\Framework\TestCase
     const START_POSITION = 0;
 
     /** @var \ReventLog\Type\RedisList\ReventLog $log */
-    private $log;
-    private $events;
+    protected $log;
+    protected $events;
 
     public function setUp()
     {
